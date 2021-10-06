@@ -1,0 +1,42 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": 2019,
+		"sourceType": "module"
+	},
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"plugins": ["svelte3"],
+	"extends": "eslint:recommended",
+	"rules": {
+		"no-console": ["warn", { "allow": ["warn", "error"] }],
+		"no-var": "warn",
+		"no-unused-vars": [
+			"warn",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"ignoreRestSiblings": true
+			}
+		],
+		"eqeqeq": ["warn", "smart"],
+		"semi": ["warn", "always"],
+		"no-spaced-func": "warn",
+		"comma-style": "warn",
+		"comma-spacing": "warn",
+		"key-spacing": "warn"
+	},
+	"settings": {
+		"svelte3/compiler-options": {
+			"customElement": true
+		}
+	},
+	"overrides": [
+		{
+			"files": ["*.svelte"],
+			"processor": "svelte3/svelte3"
+		}
+	]
+}

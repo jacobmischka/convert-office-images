@@ -1,0 +1,59 @@
+@font-face {
+	font-family: 'Selawik';
+	src: url('/selawk.ttf');
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-family: 'Selawik', sans-serif;
+	color: #111;
+}
+
+h1 {
+	font-size: 4em;
+	font-weight: normal;
+	color: #c43e1c;
+	margin: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	min-height: 100vh;
+	text-align: center;
+}
+
+header {
+	padding: 0.25em 1em;
+}
+
+main {
+	flex-grow: 1;
+	padding: 1em;
+}
+
+p {
+	margin: 0.25em 0 1em;
+}
+
+footer {
+	color: #555;
+}
+
+button {
+	padding: 1em 2em;
+	border: none;
+	background-color: #ccc;
+}
+
+button:hover,
+button:active,
+button:focus {
+	background-color: #bbb;
+}
