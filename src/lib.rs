@@ -22,7 +22,12 @@ const JPG_TYPE: &str = r#"<Default Extension="jpg" ContentType="image/jpeg" />"#
 const CONTENT_TYPES_NAME: &str = "[Content_Types].xml";
 const RELS_EXT: &str = ".xml.rels";
 
-pub fn convert<R, W>(reader: &mut R, writer: &mut W) -> Result<(), Error>
+pub fn convert<R, W>(
+    reader: &mut R,
+    writer: &mut W,
+    quality: u8,
+    reencode_jpegs: bool,
+) -> Result<(), Error>
 where
     R: Read + Seek,
     W: Write + Seek,
@@ -36,7 +41,6 @@ where
     for i in 0..reader.len() {
         let mut file = reader.by_index(i)?;
         if file.name() == CONTENT_TYPES_NAME {
-            // TODO: Unix mode?
             writer.start_file(
                 CONTENT_TYPES_NAME,
                 FileOptions::default()
@@ -90,7 +94,12 @@ where
                 buf,
             ));
         } else if file.name().contains("/media/") {
-            match convert_image(&mut file) {
+            if !reencode_jpegs && file.name().ends_with(".jpg") {
+                writer.raw_copy_file(file)?;
+                continue;
+            }
+
+            match convert_image(&mut file, quality) {
                 Ok(new_img) => {
                     let new_name = jpg_name(file.name());
 
@@ -135,13 +144,13 @@ fn read_zip(file: &mut ZipFile) -> Result<Vec<u8>, Error> {
     Ok(buf)
 }
 
-fn convert_image(zip: &mut ZipFile) -> Result<Vec<u8>, Error> {
+fn convert_image(zip: &mut ZipFile, quality: u8) -> Result<Vec<u8>, Error> {
     let img = ImageReader::new(Cursor::new(read_zip(zip)?))
         .with_guessed_format()?
         .decode()?;
 
     let mut buf = Vec::new();
-    img.write_to(&mut buf, ImageOutputFormat::Jpeg(90))?;
+    img.write_to(&mut buf, ImageOutputFormat::Jpeg(quality))?;
 
     Ok(buf)
 }

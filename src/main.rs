@@ -9,7 +9,7 @@ fn main() {
     let mut input = Cursor::new(buf);
     let mut output = Cursor::new(Vec::new());
 
-    convert(&mut input, &mut output).unwrap();
+    convert(&mut input, &mut output, 95, true).unwrap();
 
     io::stdout()
         .write_all(&output.into_inner().as_slice())
