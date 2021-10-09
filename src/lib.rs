@@ -1,4 +1,4 @@
-use image::{error::ImageError, io::Reader as ImageReader, ImageOutputFormat};
+use image::error::ImageError;
 use quick_xml::{
     events::{BytesStart, Event as XmlEvent},
     Error as XmlError, Reader as XmlReader, Writer as XmlWriter,
@@ -13,9 +13,12 @@ use std::{
     borrow::Cow,
     fmt,
     io::{Cursor, Error as IoError, Read, Seek, Write},
-    path::PathBuf,
     str,
 };
+
+pub mod img;
+
+use img::{convert_image, new_img_name, AcceptedFormat};
 
 const JPG_TYPE: &str = r#"<Default Extension="jpg" ContentType="image/jpeg" />"#;
 
@@ -90,9 +93,10 @@ where
                 buf,
             ));
         } else if file.name().contains("/media/") {
-            match convert_image(&mut file) {
+            let format = AcceptedFormat::Jpeg;
+            match convert_image(&read_zip(&mut file)?, format.output_format()) {
                 Ok(new_img) => {
-                    let new_name = jpg_name(file.name());
+                    let new_name = new_img_name(file.name(), format);
 
                     writer.start_file(
                         &new_name,
@@ -125,6 +129,25 @@ where
     Ok(())
 }
 
+pub fn get_images_data<R>(reader: R) -> Result<Vec<Vec<u8>>, Error>
+where
+    R: Read + Seek,
+{
+    let mut reader = ZipArchive::new(reader)?;
+    let mut images = Vec::new();
+
+    for i in 0..reader.len() {
+        let mut file = reader.by_index(i)?;
+        if file.name().contains("/media/") {
+            let mut img_buf = Vec::new();
+            file.read_to_end(&mut img_buf)?;
+            images.push(img_buf);
+        }
+    }
+
+    Ok(images)
+}
+
 fn strip_document_dir(path: &str) -> String {
     path.replace("word/", "").replace("ppt/", "")
 }
@@ -133,23 +156,6 @@ fn read_zip(file: &mut ZipFile) -> Result<Vec<u8>, Error> {
     let mut buf = Vec::new();
     file.read_to_end(&mut buf)?;
     Ok(buf)
-}
-
-fn convert_image(zip: &mut ZipFile) -> Result<Vec<u8>, Error> {
-    let img = ImageReader::new(Cursor::new(read_zip(zip)?))
-        .with_guessed_format()?
-        .decode()?;
-
-    let mut buf = Vec::new();
-    img.write_to(&mut buf, ImageOutputFormat::Jpeg(90))?;
-
-    Ok(buf)
-}
-
-fn jpg_name(old_path: &str) -> String {
-    let mut path = PathBuf::from(old_path);
-    path.set_extension("jpg");
-    path.as_path().display().to_string()
 }
 
 fn replace_rels(rels: Vec<u8>, replacements: &[(String, String)]) -> Result<Vec<u8>, Error> {
