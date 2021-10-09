@@ -20,7 +20,3 @@ output to stdout.
 
 You can run it from this directory using
 `cargo run -- < input-file.docx > output-file.docx`.
-
-## TODO
-
--   [ ] Offline PWA support

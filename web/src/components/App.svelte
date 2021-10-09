@@ -66,6 +66,12 @@
 				You probably don't want to go lower than 90.
 			</dd>
 		</dl>
+
+		<p>
+			<a href="https://thenounproject.com/icon/602218/" target="_blank" rel="noreferer">
+				Icon created by unlimicon from Noun Project.
+			</a>
+		</p>
 	</details>
 </section>
 
@@ -137,15 +143,23 @@
 		flex-direction: column;
 		align-items: space-between;
 		justify-content: space-between;
-		padding: 3em;
+		padding: 1em;
 		width: 60%;
-		height: 500px;
+		height: 300px;
 		max-height: 80vh;
 		background-color: #185abd;
 		border-radius: 1px;
 		cursor: pointer;
 		color: white;
 	}
+
+	@media (min-width: 600px) {
+		form label.file-input {
+			padding: 3em;
+			height: 500px;
+		}
+	}
+
 
 	form > * ~ * {
 		margin-top: 1em;
@@ -157,6 +171,12 @@
 
 	form.loading {
 		cursor: wait;
+	}
+
+	.row {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-around;
 	}
 
 	.row > label {
