@@ -15,6 +15,7 @@ use std::{
     io::{Cursor, Error as IoError, Read, Seek, Write},
     path::PathBuf,
     str,
+    str::FromStr,
 };
 
 const JPG_TYPE: &str = r#"<Default Extension="jpg" ContentType="image/jpeg" />"#;
@@ -94,14 +95,21 @@ where
                 buf,
             ));
         } else if file.name().contains("/media/") {
-            if !reencode_jpegs && file.name().ends_with(".jpg") {
+            let path = PathBuf::from_str(file.name()).unwrap();
+
+            if !reencode_jpegs
+                && path
+                    .extension()
+                    .map(|ext| ext.eq_ignore_ascii_case("jpg") || ext.eq_ignore_ascii_case("jpeg"))
+                    .unwrap_or_default()
+            {
                 writer.raw_copy_file(file)?;
                 continue;
             }
 
             match convert_image(&mut file, quality) {
                 Ok(new_img) => {
-                    let new_name = jpg_name(file.name());
+                    let new_name = jpg_name(&path);
 
                     writer.start_file(
                         &new_name,
@@ -155,10 +163,8 @@ fn convert_image(zip: &mut ZipFile, quality: u8) -> Result<Vec<u8>, Error> {
     Ok(buf)
 }
 
-fn jpg_name(old_path: &str) -> String {
-    let mut path = PathBuf::from(old_path);
-    path.set_extension("jpg");
-    path.as_path().display().to_string()
+fn jpg_name(path: &PathBuf) -> String {
+    path.with_extension("jpg").as_path().display().to_string()
 }
 
 fn replace_rels(rels: Vec<u8>, replacements: &[(String, String)]) -> Result<Vec<u8>, Error> {
