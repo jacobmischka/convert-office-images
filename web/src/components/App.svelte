@@ -14,7 +14,7 @@
 		<div class="row">
 			<label>
 				<input type="checkbox" name="reencode_jpegs" />
-				Re-encode existing JPEGS
+				Re-encode existing JPEGs
 			</label>
 
 			<label>
@@ -47,12 +47,12 @@
 	<details>
 		<summary>More information</summary>
 
-		<p>Converts all images in your document to compressed JPEGS, resulting in a smaller file size.</p>
+		<p>Converts all images in your document to compressed JPEGs, resulting in a smaller file size.</p>
 
 		<dl>
-			<dt>Re-encode existing JPEGS</dt>
+			<dt>Re-encode existing JPEGs</dt>
 			<dd>
-				If checked, images that are already JPEGS will be re-encoded.
+				If checked, images that are already JPEGs will be re-encoded.
 				Use this if the document is still too large and you want to
 				re-compress them at a lower quality.
 			</dd>
