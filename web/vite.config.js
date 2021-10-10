@@ -56,6 +56,17 @@ export default ({ mode }) => {
 						},
 					],
 				},
+				workbox: {
+					globPatterns: [
+						'**/*.js',
+						'**/*.css',
+						'**/*.html',
+						'**/*.wasm',
+						'**/*.svg',
+						'**/*.ico',
+						'**/*.png',
+					],
+				},
 			}),
 		],
 		envDir: '..',
